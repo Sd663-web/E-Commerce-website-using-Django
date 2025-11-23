@@ -1,0 +1,17 @@
+<html>
+    <body>
+        <table>
+            <tr><td>username</td><td>Email</td><td>password</td><td>ConfirmPassword</td>
+                {% for i in x %}
+                <tr>
+                    <td>{{i.username}}</td><td>{{i.Email}}</td><td>
+                        {{i.password}}</td><td>{{i.ConfirmPassword}}
+                            <button>
+                    <a href="editdata/{{i.id}}">edit</a>
+                          </button>
+                        
+                </tr>
+                {% endfor %}
+        </table>
+    </body>
+</html>

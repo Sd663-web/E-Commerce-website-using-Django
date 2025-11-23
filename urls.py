@@ -1,0 +1,32 @@
+from django.urls import path
+from . import views
+
+urlpatterns = [
+    path('signup',views.signup),
+    path('form',views.form),
+    path('index',views.index),
+    path('reg',views.reg),
+    path('sign',views.sign),
+    path('fashion',views.fashion),
+    path('electronic',views.electronic),
+    path('jewellery',views.jewellery),
+    path('home',views.home),
+    path('profile',views.profile),
+    path('display/',views.display),
+    path('display/display',views.display),
+    path('display/editdata/<int:id>',views.editdata),
+    path('display/edit/<int:id>',views.edit),
+    path('edit',views.edit),
+    path('cart/',views.cart),
+    path('cart/index',views.index),
+    path('cart/cart',views.cart),
+    path('fashion/cart',views.cart,name='cart'),
+    path('electronic/cart',views.cart,name='cart'),
+    path('jewellery/cart',views.cart,name='cart'),
+    path('cart/fashion',views.fashion,name='fashion'),
+    path('cart/electronic',views.electronic,name='electronic'),
+    path('cart/jewellery',views.jewellery,name='jewellery'),
+    path('add-to-cart/<int:product_id>/', views.add_to_cart, name='add_to_cart'),
+    path('remove-from-cart/<int:item_id>/', views.remove_from_cart, name='remove_from_cart'),
+    path('update-quantity/<int:item_id>/', views.update_quantity, name='update_quantity'),
+]

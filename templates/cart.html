@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shopping Cart</title>
+    <link rel="stylesheet" href="/static/cart-style.css">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(to right, #ff7e5f, #feb47b);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+        header {
+            width: 100%;
+            text-align: center;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.8);
+            font-size: 24px;
+            font-weight: bold;
+            position: fixed;
+            top: 0;
+            left: 0;
+        }
+        .cart-container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+            width: 60%;
+            text-align: center;
+            margin-top: 80px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        th, td {
+            padding: 10px;
+            border: 1px solid #ddd;
+        }
+        th {
+            background: #ff6600;
+            color: white;
+        }
+        .cart-summary {
+            margin-top: 20px;
+            font-size: 20px;
+            font-weight: bold;
+        }
+        button {
+            background-color: #ff6600;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            font-size: 18px;
+            border-radius: 5px;
+            transition: 0.3s;
+        }
+        button:hover {
+            background-color: #cc5200;
+        }
+        a {
+            color: #ff6600;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        .quantity-controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .quantity-controls button {
+            width: 30px;
+            height: 30px;
+            font-size: 18px;
+            margin: 0 5px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Your Shopping Cart</h1>
+        <a href="index">Back to Home</a>
+    </header>
+    <div class="cart-container">
+        <table>
+            <thead>
+                
+                <tr>
+                    <th>Product</th>
+                    <th>Price (₹)</th>
+                    <th>Quantity</th>
+                    <th>Total (₹)</th>
+                    <th>Remove</th>
+                </tr>
+            </thead>
+            </tbody>
+             {% for item in cart_items %}
+      <tr>
+         <td>{{ item.product.name }}</td>
+                     <td>₹{{ item.product.price }}</td>
+                     <td>
+                        <form method="post" action="{% url 'update_quantity' item.id %}">
+                    {% csrf_token %}
+                    <input type="number" name="quantity" value="{{ item.quantity }}" min="1">
+                    <button type="submit">Update</button>
+                </form>
+            </td>
+            <td>₹{{ item.total_price }}</td>
+            <td>
+                <form method="post" action="{% url 'remove_from_cart' item.id %}">
+                    {% csrf_token %}
+                    <button type="submit">X</button>
+                </form>
+         </td>
+      </tr>
+       {% empty %}
+        <tr>
+            <td colspan="5">Your cart is empty</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+        </table>
+        <div class="cart-summary">
+            <h2>Total: ₹<span id="cart-total">0.00</span></h2>
+            <button onclick="checkout()">Proceed to Checkout</button>
+        </div>
+    </div>
+    <script>
+        let cart = [];
+        
+        function updateCart() {
+            let cartTable = document.getElementById("cart-items");
+            let total = 0;
+            cartTable.innerHTML = "";
+            cart.forEach((item, index) => {
+                let row = `<tr>
+                    <td>${item.name}</td>
+                    <td>₹${item.price.toFixed(2)}</td>
+                    <td class="quantity-controls">
+                        <button onclick="changeQuantity(${index}, -1)">-</button>
+                        ${item.quantity}
+                        <button onclick="changeQuantity(${index}, 1)">+</button>
+                    </td>
+                    <td>₹${(item.price * item.quantity).toFixed(2)}</td>
+                    <td><button onclick="removeItem(${index})">X</button></td>
+                </tr>`;
+                cartTable.innerHTML += row;
+                total += item.price * item.quantity;
+            });
+            document.getElementById("cart-total").innerText = total.toFixed(2);
+        }
+        
+        function changeQuantity(index, change) {
+            if (cart[index].quantity + change > 0) {
+                cart[index].quantity += change;
+            } else {
+                cart.splice(index, 1);
+            }
+            updateCart();
+        }
+        
+        function removeItem(index) {
+            cart.splice(index, 1);
+            updateCart();
+        }
+        
+        function addToCart(name, price) {
+            let existingItem = cart.find(item => item.name === name);
+            if (existingItem) {
+                existingItem.quantity += 1;
+            } else {
+                cart.push({ name: name, price: price, quantity: 1 });
+            }
+            updateCart();
+            alert(`${name} has been added to your cart.`);
+        }
+        
+        function checkout() {
+            if (cart.length === 0) {
+                alert("Your cart is empty!");
+                return;
+            }
+            alert("Proceeding to checkout. Total: ₹" + document.getElementById("cart-total").innerText);
+        }
+    </script>
+</body>
+</html>

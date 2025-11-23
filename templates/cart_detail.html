@@ -1,0 +1,19 @@
+{% load custom_filters %}
+<h1>Your Cart</h1>
+<table>
+    <tr>
+        <th>Product</th>
+        <th>Price</th>
+        <th>Quantity</th>
+        <th>Subtotal</th>
+    </tr>
+    {% for item in cart.values %}
+    <tr>
+        <td>{{ item.name }}</td>
+        <td>${{ item.price }}</td>
+        <td>{{ item.quantity }}</td>
+         <td>{{ item.price|multiply:item.quantity|floatformat:2 }}</td>
+    </tr>
+    {% endfor %}
+</table>
+<p>Total: ${{ total_price }}</p>
